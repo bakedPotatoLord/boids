@@ -71,7 +71,7 @@ function update(){
 			}
 		}
 		//apply allignment
-		i.r=(i.r+ (closeBirds.r.reduce((partialSum, a) => partialSum + a, 0)/closeBirds.r.length) )/2
+		i.r=(i.r+ (closeBirds.r.reduce((partialSum, a) => partialSum + a, 0)/(closeBirds.r.length)) )/2
 
 		//apply seperation
 		for(i0 in closeBirds.x){
@@ -82,15 +82,15 @@ function update(){
 			if(dist(i.x,i.y,closeBirds.x[i0],closeBirds.y[i0])>closeBirds.avgDist){
 				if(closeBirds.y[i0]-i.y > Math.tan(i.r)*(closeBirds.x[i0]-i.x )){
 					if(i.r>=(Math.PI/2)&&i.r<=(Math.PI*(3/2))){
-						i.r+=0.1
+						i.r+=0.05
 					}else{
-						i.r-=0.1
+						i.r-=0.05
 					}
 				}else{
 					if(i.r>=(Math.PI/2)&&i.r<=(Math.PI*(3/2))){
-						i.r-=0.1
+						i.r-=0.05
 					}else{
-						i.r+=0.1
+						i.r+=0.05
 					}
 				}
 			}
