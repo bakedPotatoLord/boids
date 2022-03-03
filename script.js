@@ -78,12 +78,18 @@ function update(){
 			closeBirds.dists.push(dist(i.x,i.y,closeBirds.x[i0],closeBirds.y[i0]))
 		}
 		closeBirds.avgDist = mean(closeBirds.dists)
-		for(i0 in closeBirds){
-			
+		for(i0 in closeBirds.x){
+			if(dist(i.x,i.y,closeBirds.x[i0],closeBirds.y[i0])>closeBirds.avgDist){
+				if(closeBirds.y[i0]-i.y > Math.tan(i.r)*(closeBirds.x[i0]-i.x )){
+					i.r+=0.1+(Math.random()*0.1)
+				}else{
+					i.r+-0.1+(Math.random()*0.1)
+				}
+			}
 		}
 	}
 
-	//update xy position based on R val
+	//update xy position based on r val
 	for( i in birdArray){
 		birdArray[i].x +=Math.cos(birdArray[i].r)
 		birdArray[i].y +=Math.sin(birdArray[i].r)
