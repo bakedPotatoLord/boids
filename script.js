@@ -8,7 +8,7 @@ c.height = ch
 const birdNum = 200
 const birdSpeed = 1
 const fov = 0.8 //in radians
-const viewDist = 20 //in pixels
+const viewDist = 30 //in pixels
 const showLines = false;
 
 var birdArray = [];
@@ -27,9 +27,7 @@ function line(x1,y1,x2,y2){
 
 function isOffscreen(x,y){
 	return(x <0||x>cw||y<0||y>ch)
-
 	//return(Math.sqrt( ( ( x-200 )**2 ) + ( (y-200 )**2 )) >200)
-
 }
 
 function init(){
@@ -61,11 +59,11 @@ function update(){
 		for(i0 of birdArray){
 			if(Math.sqrt( ( (i.x-i0.x)**2) + ( (i.y-i0.y)**2) ) <= 40 ){
 				closeBirds.x.push(i0.x)
-				closeBirds.x.push(i0.x)
-				closeBirds.x.push(i0.x)
+				closeBirds.y.push(i0.y)
+				closeBirds.r.push(i0.r)
 			}
 		}
-		i.r=(i.r+ (closebirds.x.reduce((partialSum, a) => partialSum + a, 0);) )/2
+		i.r=(i.r+ (closeBirds.r.reduce((partialSum, a) => partialSum + a, 0)/closeBirds.r.length) )/2
 
 	}
 
