@@ -5,7 +5,7 @@ const ch = 400;
 c.width = cw
 c.height = ch
 
-const birdNum = 200
+const birdNum = 100
 const birdSpeed = 1
 const fov = 0.8 //in radians
 const viewDist = 30 //in pixels
@@ -27,8 +27,8 @@ function line(x1,y1,x2,y2){
 }
 
 function isOffscreen(x,y){
-	return(x <0||x>cw||y<0||y>ch)
-	//return(Math.sqrt( ( ( x-200 )**2 ) + ( (y-200 )**2 )) >200)
+	//return(x <0||x>cw||y<0||y>ch)
+	return(Math.sqrt( ( ( x-200 )**2 ) + ( (y-200 )**2 )) >200)
 }
 
 function dist(x1,y1,x2,y2){
@@ -81,9 +81,17 @@ function update(){
 		for(i0 in closeBirds.x){
 			if(dist(i.x,i.y,closeBirds.x[i0],closeBirds.y[i0])>closeBirds.avgDist){
 				if(closeBirds.y[i0]-i.y > Math.tan(i.r)*(closeBirds.x[i0]-i.x )){
-					i.r+=0.1+(Math.random()*0.1)
+					if(i.r>=(Math.PI/2)&&i.r<=(Math.PI*(3/2))){
+						i.r+=0.1
+					}else{
+						i.r-=0.1
+					}
 				}else{
-					i.r+-0.1+(Math.random()*0.1)
+					if(i.r>=(Math.PI/2)&&i.r<=(Math.PI*(3/2))){
+						i.r-=0.1
+					}else{
+						i.r+=0.1
+					}
 				}
 			}
 		}
