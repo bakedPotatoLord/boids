@@ -9,6 +9,7 @@ const birdNum = 200
 const birdSpeed = 1
 const fov = 0.8 //in radians
 const viewDist = 30 //in pixels
+const cohortDist = 20
 const showLines = false;
 
 var birdArray = [];
@@ -30,6 +31,18 @@ function isOffscreen(x,y){
 	//return(Math.sqrt( ( ( x-200 )**2 ) + ( (y-200 )**2 )) >200)
 }
 
+function dist(x1,y1,x2,y2){
+	return Math.sqrt(((x1-x2)**2) + ( (y1-y2)**2) )
+}
+
+function sum(arr){
+ return arr.reduce((partialSum, a) => partialSum + a, 0);
+}
+
+function mean(arr){
+	return sum(arr)/arr.length
+}
+
 function init(){
 	for(var i = 0; i<birdNum;i++){
 		birdArray.push(new Bird(rand(0,cw),rand(0,ch),rand(0,2*Math.PI)))
@@ -39,15 +52,8 @@ function init(){
 }
 
 function update(){
-
-
-
 	//seperation with walls
 	for (i of birdArray) {
-
-		//add a bit of randomness
-		i.r+=(0.5-Math.random())/25
-
 		//left sightPath
 		if(isOffscreen(i.x+(viewDist*Math.cos(i.r-fov)),i.y+(viewDist*Math.sin(i.r-fov))) ){
 			i.r+=0.1+(Math.random()*0.1)
@@ -55,16 +61,26 @@ function update(){
 			i.r-=0.1+(Math.random()*0.1)
 		}
 
-		closeBirds = {x:[],y:[],r:[],}
+		//define close bird array
+		closeBirds = {x:[],y:[],r:[],dists:[],avgDist:0,}
 		for(i0 of birdArray){
-			if(Math.sqrt( ( (i.x-i0.x)**2) + ( (i.y-i0.y)**2) ) <= 40 ){
+			if(dist(i.x,i.y,i0.x,i0.y) <= cohortDist ){
 				closeBirds.x.push(i0.x)
 				closeBirds.y.push(i0.y)
 				closeBirds.r.push(i0.r)
 			}
 		}
+		//apply allignment
 		i.r=(i.r+ (closeBirds.r.reduce((partialSum, a) => partialSum + a, 0)/closeBirds.r.length) )/2
 
+		//apply seperation
+		for(i0 in closeBirds.x){
+			closeBirds.dists.push(dist(i.x,i.y,closeBirds.x[i0],closeBirds.y[i0]))
+		}
+		closeBirds.avgDist = mean(closeBirds.dists)
+		for(i0 in closeBirds){
+			
+		}
 	}
 
 	//update xy position based on R val
@@ -88,8 +104,6 @@ function draw(){
 			line(i.x,i.y,i.x+(viewDist*Math.cos(i.r)),i.y+(viewDist*Math.sin(i.r)))
 			line(i.x,i.y,i.x+(viewDist*Math.cos(i.r+fov)),i.y+(viewDist*Math.sin(i.r+fov)))
 			line(i.x,i.y,i.x+(viewDist*Math.cos(i.r-fov)),i.y+(viewDist*Math.sin(i.r-fov)))
-
-
 		}
 	}
 	
