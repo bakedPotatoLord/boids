@@ -30,29 +30,48 @@ function update(){
 	for (i of birdArray) {
 		//left sightPath
 		if(i.x+(20*i.xv) <0){
+			i.xv= 1
+		}
+		if(i.x+(20*i.xv) >cw){
+			i.xv = -1
 
+		}
+		if(i.y+(20*i.yv) <0){
+			i.yv = 1
+
+		}
+		if(i.y+(20*i.yv) >cw){
+			i.yv = -1
+			
 		}
 
 		//define close bird array
 		closeBirds = []
 		for(i0 of birdArray){
-			if(dist(i.x,i.y,i0.x,i0.y) <= cohortDist ){
+			if(dist(i.x,i.y,i0.x,i0.y) <= cohortDist/2 ){
 				closeBirds.push(i0)
 			}
 		}
 		
-
+		
 		//apply seperation
-		for(i0 in closeBirds.x){
-			
+		for(i0 of closeBirds){
+			i.xv -= (i.x -i0.x)/20
+			i.yv -= (i.y -i0.y)/20
+		}
+
+		//apply allignment
+		for(i0 of closeBirds){
+			i.xv = (20*i.xv +i0.xv)/21
+			i.yv = (20*i.yv +i0.yv)/21
 		}
 		
 	}
 
 	//update xy position based on r val
-	for( i in birdArray){
-		birdArray[i].x +=birdArray[i].xv
-		birdArray[i].y +=birdArray[i].yv
+	for( i of birdArray){
+		i.x +=i.xv
+		i.y +=i.yv
 	}
 }
 
