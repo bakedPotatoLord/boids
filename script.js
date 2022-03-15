@@ -13,7 +13,7 @@ const cohortDist = 20
 const showLines = false;
 
 var birdArray = [];
-var closeBirds = {x:[],y:[],r:[],}
+var closeBirds = []
 
 function rand(min,max){
 	return min+(Math.random()*(max-min))
@@ -45,7 +45,7 @@ function mean(arr){
 
 function init(){
 	for(var i = 0; i<birdNum;i++){
-		birdArray.push(new Bird(rand(0,cw),rand(0,ch),rand(0,2*Math.PI)))
+		birdArray.push( new Bird(rand(0,cw),rand(0,ch) ) )
 	}
 	//starts loop
 	loop()
@@ -53,54 +53,32 @@ function init(){
 
 function update(){
 	//seperation with walls
-	for (i of birdArray) {
-		//left sightPath
-		if(isOffscreen(i.x+(viewDist*Math.cos(i.r-fov)),i.y+(viewDist*Math.sin(i.r-fov))) ){
-			i.r+=0.1+(Math.random()*0.1)
-		}else if(isOffscreen(i.x+(viewDist*Math.cos(i.r+fov)),i.y+(viewDist*Math.sin(i.r+fov)))){
-			i.r-=0.1+(Math.random()*0.1)
-		}
-
-		//define close bird array
-		closeBirds = {x:[],y:[],r:[],dists:[],avgDist:0,}
-		for(i0 of birdArray){
-			if(dist(i.x,i.y,i0.x,i0.y) <= cohortDist ){
-				closeBirds.x.push(i0.x)
-				closeBirds.y.push(i0.y)
-				closeBirds.r.push(i0.r)
+	for(i in birdArray){
+		closeBirds = []
+		for(j in birdArray){
+			if(dist(birdArray[i].x,birdArray[i].y,birdArray[j].x,birdArray[j].y) < 50){
+				closeBirds.push(birdArray[j])
 			}
 		}
-		//apply allignment
-		i.r=(i.r+ (closeBirds.r.reduce((partialSum, a) => partialSum + a, 0)/closeBirds.r.length) )/2
 
-		//apply seperation
-		for(i0 in closeBirds.x){
-			closeBirds.dists.push(dist(i.x,i.y,closeBirds.x[i0],closeBirds.y[i0]))
+		for(j of closeBirds){
+			//i.vx -= (i.x-j.x)
 		}
-		closeBirds.avgDist = mean(closeBirds.dists)
-		for(i0 in closeBirds.x){
-			if(dist(i.x,i.y,closeBirds.x[i0],closeBirds.y[i0])>closeBirds.avgDist){
-				if(closeBirds.y[i0]-i.y > Math.tan(i.r)*(closeBirds.x[i0]-i.x )){
-					if(i.r>=(Math.PI/2)&&i.r<=(Math.PI*(3/2))){
-						i.r+=0.1
-					}else{
-						i.r-=0.1
-					}
-				}else{
-					if(i.r>=(Math.PI/2)&&i.r<=(Math.PI*(3/2))){
-						i.r-=0.1
-					}else{
-						i.r+=0.1
-					}
-				}
-			}
+
+		if(birdArray[i].x <= 10 ){
+			birdArray[i].xv=10
+		}else if(birdArray[i].x >=cw-10){
+			birdArray[i].xv=-10
+		}else if(birdArray[i].y <=10){
+			birdArray[i].yv=10
+		}else if(birdArray[i].y >=ch-10){
+			birdArray[i].yv=-10
 		}
 	}
-
 	//update xy position based on r val
 	for( i in birdArray){
-		birdArray[i].x +=Math.cos(birdArray[i].r)
-		birdArray[i].y +=Math.sin(birdArray[i].r)
+		birdArray[i].x +=birdArray[i].vx
+		birdArray[i].y +=birdArray[i].vy
 	}
 }
 
@@ -112,13 +90,9 @@ function draw(){
 	ctx.lineWidth = 2
 	for( i of birdArray){
 		ctx.beginPath();
-		ctx.ellipse(i.x, i.y, 5, 3, i.r, 0, 2*Math.PI);
+		ctx.ellipse(i.x, i.y, 5, 3, 0, 0, 2*Math.PI);
 		ctx.fill()
-		if(showLines){
-			line(i.x,i.y,i.x+(viewDist*Math.cos(i.r)),i.y+(viewDist*Math.sin(i.r)))
-			line(i.x,i.y,i.x+(viewDist*Math.cos(i.r+fov)),i.y+(viewDist*Math.sin(i.r+fov)))
-			line(i.x,i.y,i.x+(viewDist*Math.cos(i.r-fov)),i.y+(viewDist*Math.sin(i.r-fov)))
-		}
+		line(i.x,i.y,i.x+i.xv,i.y+i.yv)
 	}
 	
 }
@@ -131,14 +105,15 @@ function loop(){
 	update()
 	draw()
 
-	window.setTimeout(loop,20)
+	window.setTimeout(loop,22)
 }
 
 class Bird{
-	constructor(x,y,r){
+	constructor(x,y){
 		this.x = x
 		this.y = y
-		this.r = r
+		this.vx = (Math.random()*2)-1
+		this.vy = (Math.random()*2)-1
 	}
 }
 
